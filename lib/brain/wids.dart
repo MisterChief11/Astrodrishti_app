@@ -28,12 +28,16 @@ class api {
     try {
       Uri url = await Uri.parse(
           "https://api.vedicastroapi.com/json/horoscope/vedic?dob=$date&tob=$time&lat=$lat&lon=$long&tz=$timezone&api_key=$keyy");
+      // Uri urlimg = await Uri.parse(
+      //     "https://api.vedicastroapi.com/json/horoscope/chartimage?dob=$date&tob=$time&lat=$lat&lon=$long&tz=$timezone&div=D1&api_key=$keyy");
+      // http.Response resimg = await http.get(urlimg);
       http.Response res = await http.get(url);
-
+      // print(resimg.statusCode);
       String data = res.body;
-      //print(data);
+      print(jsonDecode(data)["response"]);
       List palnets = ["", "", "", "", "", "", "", "", "", "", "", "", "", ""];
       List houseno = ["", "", "", "", "", "", "", "", "", "", "", "", ""];
+      List deglist = [];
       for (var i = 0; i < 10; i++) {
         try {
           int x = jsonDecode(data)['response'][i.toString()]['house'];
@@ -41,6 +45,10 @@ class api {
           palnets[x] = await palnets[x] +
               " " +
               jsonDecode(data)["response"][i.toString()]['full_name'];
+          deglist.add({
+            jsonDecode(data)['response'][i.toString()]['full_name']:
+                jsonDecode(data)['response'][i.toString()]['local_degree']
+          });
         } on Exception {
           break;
         }
@@ -69,8 +77,9 @@ class api {
       }
       //print(palnets+houseno);
       List new_list = palnets + houseno;
+
       //print(new_list);
-      return new_list;
+      return [new_list, deglist];
     } catch (e) {
       print("22");
     }
@@ -100,7 +109,7 @@ class chotabox extends StatelessWidget {
   }
 }
 
-class  Txtfld extends StatelessWidget {
+class Txtfld extends StatelessWidget {
   Txtfld({required this.txt, required this.contro});
 
   String txt;
@@ -237,11 +246,12 @@ class svbox extends StatelessWidget {
       required this.time,
       required this.lat,
       required this.lon,
+      required this.deglist,
       required this.tmz,
       required this.plc});
   String data = "No data Saved";
   String dob = "No data saved";
-  List planets;
+  List planets, deglist;
   String time;
   String lat, lon;
   String tmz;
@@ -255,6 +265,7 @@ class svbox extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => kundli_page(
+                      degreeslist: deglist,
                       planets: planets,
                       dob: dob,
                       time: time,

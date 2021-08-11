@@ -1,7 +1,6 @@
-
-
 import 'package:astrodrishti_app/brain/brain.dart';
 import 'package:astrodrishti_app/brain/wids.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,17 +11,17 @@ import '../startpage.dart';
 import 'resultpage.dart';
 
 class kundli_page extends StatefulWidget {
-  kundli_page({
-    required this.planets,
-    required this.name,
-    required this.dob,
-    required this.place,
-    required this.time,
-    required this.timezone,
-    required this.lat,
-    required this.lon,
-  });
-  List planets;
+  kundli_page(
+      {required this.planets,
+      required this.name,
+      required this.dob,
+      required this.place,
+      required this.time,
+      required this.timezone,
+      required this.lat,
+      required this.lon,
+      required this.degreeslist});
+  List planets, degreeslist;
   String name;
   String dob;
   String place;
@@ -37,8 +36,147 @@ class kundli_page extends StatefulWidget {
 class _kundli_pageState extends State<kundli_page> {
   @override
   bool spin = false;
+  List<Widget> degbox = [];
+
+  @override
+  void initState() {
+    super.initState();
+    print(widget.degreeslist);
+    for (Map i in widget.degreeslist) {
+     
+      degbox.add(Deg_Box(name: i.keys.toString().replaceAll("(", "").replaceAll(")", ""), val: i.values.toString().replaceAll("(", "").replaceAll(")", "").substring(0,5)));
+    }
+    setState(() {});
+  }
 
   Widget build(BuildContext context) {
+    List<Widget> widsofswiper = [
+      Container(
+        height: 325,
+        width: 300,
+        margin: EdgeInsets.fromLTRB(30, 20, 30, 0),
+        decoration: BoxDecoration(
+            image: DecorationImage(image: AssetImage("images/kundli11.jpg")),
+            border: Border.all(color: Colors.white)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                chotabox(
+                    planet: " " +
+                        "(" +
+                        (widget.planets[16]).toString() +
+                        ")" +
+                        "\n" +
+                        widget.planets[2]),
+                chotabox(
+                    planet: " " +
+                        "(" +
+                        (widget.planets[26]).toString() +
+                        ")" +
+                        "\n" +
+                        widget.planets[12]),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                chotabox(
+                    planet: "  " +
+                        "(" +
+                        (widget.planets[17]).toString() +
+                        ")" +
+                        "\n" +
+                        widget.planets[3]),
+                chotabox(planet: widget.planets[1].toString()),
+                chotabox(
+                    planet: " " +
+                        "(" +
+                        (widget.planets[25]).toString() +
+                        ")" +
+                        "\n" +
+                        widget.planets[11].toString()),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                chotabox(
+                    planet: "  " +
+                        "(" +
+                        (widget.planets[18]).toString() +
+                        ")" +
+                        "\n" +
+                        widget.planets[4].toString()),
+                chotabox(
+                    planet: "  " +
+                        "(" +
+                        (widget.planets[24]).toString() +
+                        ")" +
+                        "\n" +
+                        widget.planets[10].toString()),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                chotabox(
+                    planet: "" +
+                        "(" +
+                        (widget.planets[19]).toString() +
+                        ")" +
+                        "\n" +
+                        widget.planets[5].toString()),
+                chotabox(
+                    planet: "  " +
+                        "(" +
+                        (widget.planets[21]).toString() +
+                        ")" +
+                        "\n" +
+                        widget.planets[7].toString()),
+                chotabox(
+                    planet: "  " +
+                        "(" +
+                        (widget.planets[23]).toString() +
+                        ")" +
+                        "\n" +
+                        widget.planets[9].toString())
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                chotabox(
+                    planet: "        " +
+                        "(" +
+                        (widget.planets[20]).toString() +
+                        ")" +
+                        "\n" +
+                        widget.planets[6]),
+                chotabox(
+                    planet: "        " +
+                        "(" +
+                        (widget.planets[22]).toString() +
+                        ")" +
+                        "\n" +
+                        widget.planets[8]),
+              ],
+            ),
+          ],
+        ),
+      ),
+      Container(
+        margin: EdgeInsets.all(MediaQuery.of(context).size.height * 0.02),
+        padding: EdgeInsets.all(5),
+        // height: 370,
+        decoration: BoxDecoration(
+            color: Colors.transparent,
+            // border: Border.all(color: Colors.white),
+            borderRadius: BorderRadius.circular(10)),
+        child: SingleChildScrollView(
+          child: Column(
+            children: degbox,
+          ),
+        ),
+      )
+    ];
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -59,115 +197,14 @@ class _kundli_pageState extends State<kundli_page> {
           child: Column(
             children: <Widget>[
               Container(
-                height: 300,
-                width: 300,
-                margin: EdgeInsets.fromLTRB(30, 20, 30, 0),
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage("images/kundli11.jpg")),
-                    border: Border.all(color: Colors.white)),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        chotabox(
-                            planet: " " +
-                                "(" +
-                                (widget.planets[16]).toString() +
-                                ")" +
-                                "\n" +
-                                widget.planets[2]),
-                        chotabox(
-                            planet: " " +
-                                "(" +
-                                (widget.planets[26]).toString() +
-                                ")" +
-                                "\n" +
-                                widget.planets[12]),
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        chotabox(
-                            planet: "  " +
-                                "(" +
-                                (widget.planets[17]).toString() +
-                                ")" +
-                                "\n" +
-                                widget.planets[3]),
-                        chotabox(planet: widget.planets[1].toString()),
-                        chotabox(
-                            planet: " " +
-                                "(" +
-                                (widget.planets[25]).toString() +
-                                ")" +
-                                "\n" +
-                                widget.planets[11].toString()),
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        chotabox(
-                            planet: "  " +
-                                "(" +
-                                (widget.planets[18]).toString() +
-                                ")" +
-                                "\n" +
-                                widget.planets[4].toString()),
-                        chotabox(
-                            planet: "  " +
-                                "(" +
-                                (widget.planets[24]).toString() +
-                                ")" +
-                                "\n" +
-                                widget.planets[10].toString()),
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        chotabox(
-                            planet: "" +
-                                "(" +
-                                (widget.planets[19]).toString() +
-                                ")" +
-                                "\n" +
-                                widget.planets[5].toString()),
-                        chotabox(
-                            planet: "  " +
-                                "(" +
-                                (widget.planets[21]).toString() +
-                                ")" +
-                                "\n" +
-                                widget.planets[7].toString()),
-                        chotabox(
-                            planet: "  " +
-                                "(" +
-                                (widget.planets[23]).toString() +
-                                ")" +
-                                "\n" +
-                                widget.planets[9].toString())
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        chotabox(
-                            planet: "        " +
-                                "(" +
-                                (widget.planets[20]).toString() +
-                                ")" +
-                                "\n" +
-                                widget.planets[6]),
-                        chotabox(
-                            planet: "        " +
-                                "(" +
-                                (widget.planets[22]).toString() +
-                                ")" +
-                                "\n" +
-                                widget.planets[8]),
-                      ],
-                    ),
-                  ],
+                height: 325,
+                child: Swiper(
+                  itemBuilder: (BuildContext context, int index) {
+                    return widsofswiper[index];
+                  },
+                  itemCount: 2,
+                  pagination: new SwiperPagination(),
+                  control: new SwiperControl(),
                 ),
               ),
               SizedBox(
@@ -187,30 +224,23 @@ class _kundli_pageState extends State<kundli_page> {
                         Text(
                           "Data".tr(),
                           style: TextStyle(
-                              fontSize: 40, fontWeight: FontWeight.bold,color: Colors.white),
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
                         ),
                       ],
                     ),
                     Text(
                       widget.name,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white
-                      ),
+                      style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
                     Text(
                       widget.dob,
-                      style: TextStyle(
-                        fontSize: 20
-                        ,color: Colors.white
-                      ),
+                      style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
                     Text(
                       widget.place,
-                      style: TextStyle(
-                        fontSize: 20
-                        ,color: Colors.white
-                      ),
+                      style: TextStyle(fontSize: 20, color: Colors.white),
                     )
                   ],
                 ),
@@ -323,7 +353,8 @@ class _kundli_pageState extends State<kundli_page> {
                                 "lat": widget.lat,
                                 "lon": widget.lon,
                                 "timezone": widget.timezone,
-                                "planets": widget.planets
+                                "planets": widget.planets,
+                                 "deglist": widget.degreeslist
                               });
                               await FirebaseFirestore.instance
                                   .collection("Users")
@@ -369,7 +400,8 @@ class _kundli_pageState extends State<kundli_page> {
                                 "timezone": widget.timezone,
                                 "lat": widget.lat,
                                 "lon": widget.lon,
-                                "planets": widget.planets
+                                "planets": widget.planets,
+                                "deglist": widget.degreeslist
                               });
                               await FirebaseFirestore.instance
                                   .collection("Users")
@@ -409,6 +441,38 @@ class _kundli_pageState extends State<kundli_page> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class Deg_Box extends StatelessWidget {
+  Deg_Box({required this.name, required this.val});
+  String name, val;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.amberAccent.shade700),
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.transparent),
+      child: Row(
+        children: [
+          Text(
+            name,
+            style: TextStyle(
+                color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          Spacer(),
+          Text(val,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal)),
+        ],
       ),
     );
   }

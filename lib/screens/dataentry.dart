@@ -198,22 +198,42 @@ class _data_entryState extends State<data_entry> {
                 await getLocationWithNominatim();
                 http.Response res = await http.get(Uri.parse(
                     "https://us1.locationiq.com/v1/reverse.php?key=4b811c0bc86e19&lat=$lat&lon=$lon&format=json"));
+                print(res.body);
                 http.Response ress = await http.get(Uri.parse(
                     "http://api.timezonedb.com/v2.1/get-time-zone?key=0MX7YDAS3D26&format=json&by=position&lat=$lat&lng=$lon"));
                 setState(() {
                   if (jsonDecode(res.body)["address"]["city"] == null) {
-                    loca = jsonDecode(res.body)["address"]["county"] +
-                        ", " +
-                        jsonDecode(res.body)["address"]["state"] +
-                        ", " +
-                        jsonDecode(res.body)["address"]["country"];
+                    if (jsonDecode(res.body)["address"]["village"] == null) {
+                      loca = jsonDecode(res.body)["address"]["town"]
+                              .toString() +
+                          ", " +
+                          jsonDecode(res.body)["address"]["state"].toString() +
+                          ", " +
+                          jsonDecode(res.body)["address"]["country"].toString();
+                    } else {
+                      loca = jsonDecode(res.body)["address"]["village"]
+                              .toString() +
+                          ", " +
+                          jsonDecode(res.body)["address"]["state"].toString() +
+                          ", " +
+                          jsonDecode(res.body)["address"]["country"].toString();
+                    }
                   } else {
-                    loca = jsonDecode(res.body)["address"]["city"] +
-                        ", " +
-                        jsonDecode(res.body)["address"]["state"] +
-                        ", " +
-                        jsonDecode(res.body)["address"]["country"];
+                    if (jsonDecode(res.body)["address"]["state"] == null) {
+                      loca = jsonDecode(res.body)["address"]["city"]
+                              .toString() +
+                          ", " +
+                          jsonDecode(res.body)["address"]["country"].toString();
+                    } else {
+                      loca = jsonDecode(res.body)["address"]["city"]
+                              .toString() +
+                          ", " +
+                          jsonDecode(res.body)["address"]["state"].toString() +
+                          ", " +
+                          jsonDecode(res.body)["address"]["country"].toString();
+                    }
                   }
+                  loca = loca.replaceAll("null", "");
                   tmz = (json.decode(ress.body)['gmtOffset'].toInt() / 3600)
                       .toString();
                   tmzdata = (json.decode(ress.body)['gmtOffset'].toInt() / 3600)
@@ -228,7 +248,7 @@ class _data_entryState extends State<data_entry> {
               },
               child: Container(
                 margin: EdgeInsets.fromLTRB(10, 5, 15, 10),
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.amberAccent.shade700),
                   borderRadius: BorderRadius.circular(10),
@@ -244,7 +264,7 @@ class _data_entryState extends State<data_entry> {
             ),
             Container(
               margin: EdgeInsets.fromLTRB(10, 5, 15, 0),
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.amberAccent.shade700),
                 borderRadius: BorderRadius.circular(10),
@@ -277,17 +297,19 @@ class _data_entryState extends State<data_entry> {
                     timezone: tmz,
                   );
                   var data = await kdap.apiwrk();
+                  print(data);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => kundli_page(
-                              planets: data,
+                              planets: data[0],
                               place: loca,
                               time: timei,
                               name: nameController.text,
                               timezone: tmz,
                               lat: lat,
                               lon: lon,
+                              degreeslist: data[1],
                               dob: datei)));
                   setState(() {
                     spin = false;

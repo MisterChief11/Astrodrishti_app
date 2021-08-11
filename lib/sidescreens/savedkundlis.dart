@@ -42,6 +42,7 @@ class _sv_kundliState extends State<sv_kundli> {
                   email: widget.email,
                   lat: (snapshot.data as QuerySnapshot).docs[i]["lat"],
                   lon: (snapshot.data as QuerySnapshot).docs[i]["lon"],
+                  deglist: (snapshot.data as QuerySnapshot).docs[i]["deglist"],
                   plc: (snapshot.data as QuerySnapshot).docs[i]["birthplace"],
                   planets: (snapshot.data as QuerySnapshot).docs[i]["planets"],
                   time: (snapshot.data as QuerySnapshot).docs[i]["Birthtime"],
